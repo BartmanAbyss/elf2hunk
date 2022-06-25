@@ -875,6 +875,16 @@ int elf2hunk(int file, int hunk_fd, const char *libname, int flags)
 							hh[i]->memflags |= MEMF_KICK;
 						} else if(strcmp(nameext, ".MEMF_FAST") == 0) {
 							hh[i]->memflags |= MEMF_FAST;
+						} else if(strcmp(nameext, ".MEMF_CHIP_BSS") == 0) {
+							free(hh[i]->data);
+							hh[i]->memflags |= MEMF_CHIP;
+							hh[i]->type = HUNK_BSS;
+							hh[i]->data = NULL;
+						} else if(strcmp(nameext, ".MEMF_FAST_BSS") == 0) {
+							free(hh[i]->data);
+							hh[i]->memflags |= MEMF_FAST;
+							hh[i]->type = HUNK_BSS;
+							hh[i]->data = NULL;
 						}
 					}
 				}
