@@ -24,6 +24,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+// Linux does not have O_BINARY - petmac
+#ifndef O_BINARY
+	#define O_BINARY 0
+#endif
+
 #define F_VERBOSE       (1 << 0)
 #define F_NOCONVERT     (1 << 1)
 #define F_PCREL         (1 << 2)
