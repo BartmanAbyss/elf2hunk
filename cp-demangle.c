@@ -99,7 +99,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
+#ifdef _MSC_VER
+#include <malloc.h> // alloca
+#endif
 
 //#include "ansidecl.h"
 //#include "libiberty.h"

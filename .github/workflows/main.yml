@@ -1,0 +1,25 @@
+name: CI
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    env:
+      SOLUTION_FILE_PATH: .
+      BUILD_CONFIGURATION: Debug
+    steps:
+      - uses: actions/checkout@v3
+      - uses: microsoft/setup-msbuild@v1.1
+      - run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - run: make
+  mac:
+    runs-on: macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - run: make

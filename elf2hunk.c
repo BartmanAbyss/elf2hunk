@@ -24,6 +24,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+// Linux does not have O_BINARY - petmac
+#ifndef O_BINARY
+	#define O_BINARY 0
+#endif
+
 #define F_VERBOSE       (1 << 0)
 #define F_NOCONVERT     (1 << 1)
 #define F_PCREL         (1 << 2)
@@ -1166,7 +1171,11 @@ static int copy(const char *src, const char *dst, int flags)
 	if(strcmp(dst, "-") == 0)
 		hunk_fd = 1; /* stdout */
 	else {
+#ifdef _MSC_VER
 		_unlink(dst);
+#else
+		unlink(dst);
+#endif
 		hunk_fd = open(dst, O_RDWR | O_CREAT | O_TRUNC | O_BINARY, mode);
 	}
 	if(hunk_fd < 0) {
