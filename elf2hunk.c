@@ -587,6 +587,14 @@ static int relocate
 			break;
 
 		case R_68K_PC32:
+			// A relative relocation referring to another section requires emitting HUNK_RELRELOC32, which we don't currently support
+			if ((int)shindex != (int)(shrel->info)) {
+				bug("[ELF2HUNK] R_68K_PC32 relocation referring to another section unsupported,\n");
+				bug("[ELF2HUNK]    for symbol '%s'\n", symname);
+				set_error(EINVAL);
+				return 0;
+			}
+			// A relative relocation referring to the same section won't require relocation at load time, so just fix it up and don't emit a hunk relocation
 			value += rel->addend - offset;
 			break;
 
@@ -622,8 +630,8 @@ static int relocate
 		}
 		D(bug("[ELF2HUNK]   shid %d, offset 0x%x: base 0x%x\n", (int)shid, (int)offset, (int)value));
 		*(ULONG *)((uintptr_t)h->data + offset) = htonl(value + ntohl(*(ULONG *)((uintptr_t)h->data + offset)));
-		// SHN_ABS don't need relocation, we already modified it inplace
-		if(shid == ~0) {
+		// SHN_ABS and R_68K_PC32 referring to the same section don't need relocation, we already modified it inplace
+		if(shid == ~0 || ELF_R_TYPE(rel->info) == R_68K_PC32) {
 			h->relocs--;
 			continue;
 		}
